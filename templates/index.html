@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Data Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #1a1a2e;
+            color: white;
+            padding-top: 30px;
+        }
+        .container {
+            background-color: #222;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(112, 101, 162, 0.4);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #7065a2;
+            font-weight: 700;
+            text-align: center;
+        }
+        .sticky-nav {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #1a1a2e;
+            padding: 10px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .nav-tabs .nav-link {
+            color: #ddd;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .nav-tabs .nav-link.active {
+            font-weight: 700;
+            background-color: #7065a2;
+            color: white;
+            border-radius: 10px;
+        }
+        .nav-tabs .nav-link:hover {
+            color: #a292ff;
+        }
+        .tab-content {
+            margin-top: 30px;
+        }
+        .btn {
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            padding: 12px;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #7065a2, #43399b);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 10px rgba(112, 101, 162, 0.5);
+        }
+        .btn-primary:hover {
+            background: #5a4fb3;
+            box-shadow: 0 6px 15px rgba(112, 101, 162, 0.7);
+        }
+        .btn-secondary {
+            background-color: #444;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #5a5a5a;
+        }
+        input[type="text"] {
+            border-radius: 8px;
+            padding: 12px;
+            border: 2px solid #7065a2;
+            margin-bottom: 15px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            transition: border 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #a292ff;
+            outline: none;
+            box-shadow: 0 0 8px rgba(112, 101, 162, 0.7);
+        }
+        .data-card {
+            background-color: #292950;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(112, 101, 162, 0.5);
+            margin-top: 15px;
+        }
+        .data-card pre {
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-size: 14px;
+        }
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            width: 50%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(112, 101, 162, 0.5);
+        }
+        .upload-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .upload-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .upload-form input[type="file"] {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="image-container">
+            <img src="{{ url_for('static', filename='images/Obsidian_Loader.png') }}" alt="Obsidian Loader">
+        </div>
+        <div class="upload-form">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <label for="file">Upload Excel File:</label>
+                <input type="file" name="file" id="file" required>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+        <h2>Team Data Dashboard</h2>
+        <div class="sticky-nav">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#team_average">Team Average</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#all_team_averages">All Team Averages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#team_rankings">Team Rankings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#match_data">Match Data</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#most_died">Most Broke</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#qr_scout">QR Scout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#match_points">Match Points</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="tab-content">
+            <div id="team_average" class="tab-pane fade show active">
+                <h3 class="mt-4">Team Average Calculator</h3>
+                <input type="text" class="form-control" id="team_number" placeholder="Enter Team Number">
+                <button class="btn btn-primary" id="search_button">Get Team Averages</button>
+                <div class="data-card"><pre id="result"></pre></div>
+            </div>
+
+            <div id="all_team_averages" class="tab-pane fade">
+                <h3 class="mt-4">All Team Averages</h3>
+                <button class="btn btn-primary" id="get_all_averages">Get All Team Averages</button>
+                <div class="data-card"><pre id="all_averages_result"></pre></div>
+            </div>
+
+            <div id="team_rankings" class="tab-pane fade">
+                <h3 class="mt-4">Team Rankings</h3>
+                <button class="btn btn-primary" id="get_team_rankings">Show Team Rankings</button>
+                <div class="data-card"><pre id="rank_result"></pre></div>
+            </div>
+
+            <div id="match_data" class="tab-pane fade">
+                <h3 class="mt-4">Match Data</h3>
+                <input type="text" class="form-control" id="match_team_number" placeholder="Enter Team Number">
+                <button class="btn btn-primary" id="get_match_data">Get Match Data</button>
+                <div class="data-card"><pre id="match_result"></pre></div>
+            </div>
+
+            <div id="most_died" class="tab-pane fade">
+                <h3 class="mt-4">Most Broke</h3>
+                <button class="btn btn-primary" id="get_most_died">Show Most Broke</button>
+                <div class="data-card"><pre id="most_died_result"></pre></div>
+            </div>
+
+            <div id="qr_scout" class="tab-pane fade">
+                <h3 class="mt-4">QR Scout</h3>
+                <iframe src="https://frc2713.github.io/QRScout/" width="100%" height="1200px" style="border: none;"></iframe>
+            </div>
+
+            <div id="match_points" class="tab-pane fade">
+                <h3 class="mt-4">Match Points Estimator</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Red Alliance</h4>
+                        <input type="text" class="form-control" id="red_team_1" placeholder="Enter Red Team 1 Number">
+                        <input type="text" class="form-control" id="red_team_2" placeholder="Enter Red Team 2 Number">
+                        <input type="text" class="form-control" id="red_team_3" placeholder="Enter Red Team 3 Number">
+                    </div>
+                    <div class="col-md-6">
+                        <h4>Blue Alliance</h4>
+                        <input type="text" class="form-control" id="blue_team_1" placeholder="Enter Blue Team 1 Number">
+                        <input type="text" class="form-control" id="blue_team_2" placeholder="Enter Blue Team 2 Number">
+                        <input type="text" class="form-control" id="blue_team_3" placeholder="Enter Blue Team 3 Number">
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-4" id="calculate_points">Calculate Match Points</button>
+                <div class="data-card"><pre id="match_points_result"></pre></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>
